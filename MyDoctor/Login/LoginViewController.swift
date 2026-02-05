@@ -229,14 +229,6 @@ class LoginController: UIViewController {
         viewModel.password = passwordContainer.1.text
         viewModel.loginUser()
     }
-
-    private func setupKeyboardObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tap)
-    }
     
     @objc private func forgotPasswordTapped() {
         coordinator?.showPasswordRecovery()
@@ -258,67 +250,9 @@ class LoginController: UIViewController {
         }
     }
     
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
-    @objc private func keyboardWillShow(notification: NSNotification) {
-        if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardHeight = keyboardFrame.cgRectValue.height
-            if self.view.frame.origin.y == 0 {
-                self.view.frame.origin.y -= (keyboardHeight / 2)
-            }
-        }
-    }
-    
-    @objc private func keyboardWillHide() {
-        if self.view.frame.origin.y != 0 {
-            self.view.frame.origin.y = 0
-        }
-    }
 }*/
 
 import SwiftUI
-
-/*struct LoginView: View {
-    @StateObject private var viewModel = LoginViewModel()
-    @Environment(\.dismiss) var dismiss
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            VStack {
-                HStack {
-                    Button(action: { dismiss() }) {
-                        HStack(spacing: 5) {
-                            Image(systemName: "chevron.left")
-                        }
-                        .foregroundColor(.black)
-                    }
-                    Spacer()
-                }
-                .padding(.horizontal)
-                
-                Image("hospitalLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 90, height: 90)
-                    .padding(.top, 10)
-            }
-            .padding(.top, 10)
-            
-            ScrollView {
-                VStack {
-                    AuthFormView(mode: .login)
-                        .padding(.top, 30)
-                }
-                .padding(.horizontal, 10)
-            }
-            .scrollIndicators(.hidden)
-            .scrollDismissesKeyboard(.interactively)
-        }
-        .navigationBarHidden(true)
-    }
-}*/
 
 struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()

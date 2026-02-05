@@ -59,5 +59,6 @@ import Foundation
 
 class LoginViewModel: ObservableObject {
     func login() {
+        
     }
 }

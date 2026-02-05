@@ -7,178 +7,6 @@
 
 import SwiftUI
 
-/*struct AuthFormView: View {
-    var mode: AuthMode
-    
-    @State private var name = ""
-    @State private var email = ""
-    @State private var password = ""
-    @State private var isPasswordVisible = false
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text(mode.title)
-                .font(.system(size: 20, weight: .bold))
-                .foregroundColor(.black)
-            
-            VStack(spacing: 12) {
-                
-                if mode == .registration {
-                    customTextField(title: "Ad", placeholder: "Nuridə", text: $name)
-                }
-                
-                customTextField(title: "E-mail", placeholder: "nuridaismail88@gmail.com", text: $email)
-                
-                if mode != .passwordRecovery {
-                    customPasswordField(title: "Şifrə", placeholder: "Nurida1988", text: $password)
-                }
-                
-                
-                Button(action: {
-                   
-                }) {
-                    Text(mode.buttonTitle)
-                        .font(.system(size: 16, weight: .semibold))
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(isFormValid ? Color(red: 77/255, green: 182/255, blue: 172/255) : Color.gray)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
-                .disabled(!isFormValid)
-                .padding(.top, 10)
-            }
-            .padding(16)
-            .background(Color(red: 0.94, green: 0.96, blue: 0.96))
-            .cornerRadius(20)
-            
-            if mode == .passwordRecovery {
-                Text("Şifrənin bərpası üçün e-poçt ünvanınızı daxil edin.")
-                    .font(.system(size: 12))
-                    .foregroundColor(.gray)
-                    .padding(.horizontal, 5)
-            }
-        }
-        .padding(.horizontal, 20)
-    }
-    
-    var isFormValid: Bool {
-        switch mode {
-        case .registration:
-            return isNameValid && isEmailValid && isPasswordValid
-        case .passwordRecovery:
-            return isEmailValid
-        default:
-            return isEmailValid && !password.isEmpty
-        }
-    }
-
-    // MARK: - Validation Rules
-
-    var isNameValid: Bool {
-        let nameRegex = "^[A-Za-zƏəİıIıÖöĞğŞşÇç]{4,}$"
-        let namePredicate = NSPredicate(format: "SELF MATCHES %@", nameRegex)
-        return namePredicate.evaluate(with: name.trimmingCharacters(in: .whitespaces))
-    }
-
-    var isEmailValid: Bool {
-        let emailRegex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$"
-        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
-        return emailPredicate.evaluate(with: email)
-    }
-
-    var isPasswordValid: Bool {
-        let passwordRegex = "^(?=.*[a-z])(?=.*[A-Z]).{8,}$"
-        let passwordPredicate = NSPredicate(format: "SELF MATCHES %@", passwordRegex)
-        return passwordPredicate.evaluate(with: password)
-    }
-    
-    @ViewBuilder
-    func customTextField(title: String, placeholder: String, text: Binding<String>) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.black)
-                .padding(.horizontal, 12)
-                .padding(.top, 8)
-            
-            TextField(placeholder, text: text)
-                .font(.system(size: 14))
-                .padding(.horizontal, 12)
-                .padding(.bottom, 8)
-                .keyboardType(title == "E-mail" ? .emailAddress : .default)
-                .autocapitalization(.none)
-                .onChange(of: text.wrappedValue) { oldValue, newValue in
-                    if title == "Ad" {
-                        let filtered = newValue.filter { $0.isLetter || $0.isWhitespace }
-                        if filtered.count > 50 {
-                            text.wrappedValue = String(filtered.prefix(50))
-                        } else if filtered != newValue {
-                            text.wrappedValue = filtered
-                        }
-                    }
-                    
-                    if title == "E-mail" {
-                        var filtered = newValue.filter { !$0.isWhitespace }.lowercased()
-                        
-                        while filtered.contains("..") {
-                            filtered = filtered.replacingOccurrences(of: "..", with: ".")
-                        }
-                        
-                        let parts = filtered.components(separatedBy: "@")
-                        if parts.count > 2 {
-                            filtered = parts[0] + "@" + parts[1...].joined(separator: "").replacingOccurrences(of: "@", with: "")
-                        }
-                        
-                        filtered = filtered.replacingOccurrences(of: "@.", with: "@")
-
-                        if filtered != newValue {
-                            text.wrappedValue = filtered
-                        }
-                    }
-                }
-        }
-        .background(Color.white)
-        .cornerRadius(12)
-    }
-    
-    @ViewBuilder
-    func customPasswordField(title: String, placeholder: String, text: Binding<String>) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(title)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.black)
-                .padding(.horizontal, 12)
-                .padding(.top, 8)
-            
-            ZStack(alignment: .trailing) {
-                Group {
-                    if isPasswordVisible {
-                        TextField(placeholder, text: text)
-                    } else {
-                        SecureField(placeholder, text: text)
-                    }
-                }
-                .padding(.leading, 12)
-                .padding(.trailing, 40) 
-                
-                Button(action: { isPasswordVisible.toggle() }) {
-                    Image(systemName: isPasswordVisible ? "eye" : "eye.slash")
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
-                }
-                .padding(.trailing, 12)
-            }
-            .font(.system(size: 14))
-            .padding(.bottom, 12)
-        }
-        .background(Color.white)
-        .cornerRadius(12)
-    }
-}*/
-
-import SwiftUI
-
 struct AuthFormView: View {
     var mode: AuthMode
     
@@ -195,7 +23,6 @@ struct AuthFormView: View {
             
             VStack(spacing: 12) {
                 
-                // MARK: - Ad Sahəsi
                 if mode == .registration {
                     VStack(alignment: .leading, spacing: 4) {
                         customTextField(title: "Ad", placeholder: "Nuridə", text: $name)
@@ -205,7 +32,6 @@ struct AuthFormView: View {
                     }
                 }
                 
-                // MARK: - E-mail Sahəsi
                 VStack(alignment: .leading, spacing: 4) {
                     customTextField(title: "E-mail", placeholder: "nuridaismail88@gmail.com", text: $email)
                     if !email.isEmpty && !isEmailValid {
@@ -213,7 +39,6 @@ struct AuthFormView: View {
                     }
                 }
                 
-                // MARK: - Şifrə Sahəsi
                 if mode != .passwordRecovery {
                     VStack(alignment: .leading, spacing: 4) {
                         customPasswordField(title: "Şifrə", placeholder: "Nurida1988", text: $password)
