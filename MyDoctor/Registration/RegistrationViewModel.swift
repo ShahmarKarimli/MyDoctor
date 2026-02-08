@@ -90,6 +90,7 @@ import Foundation
 }*/
 
 import Foundation
+import Combine
 
 class RegistrationViewModel: ObservableObject {
     @Published var firstname = ""
@@ -97,62 +98,75 @@ class RegistrationViewModel: ObservableObject {
     @Published var email = ""
     @Published var password = ""
     @Published var phoneNumber = ""
-    @Published var role = "PATIENT"
     
     @Published var isLoading = false
     @Published var errorMessage: String?
-    @Published var otpCode = ""
     @Published var showOtpField = false
-    @Published var registrationSuccess = false
-
-    // MARK: - Register Action
-    func register() {
-        isLoading = true
-        errorMessage = nil
+    @Published var emailCheckError: String?
+    
+    var isFormValid: Bool {
+        let hasUpperCase = password.rangeOfCharacter(from: .uppercaseLetters) != nil
+        let hasLowerCase = password.rangeOfCharacter(from: .lowercaseLetters) != nil
+        let isLengthValid = password.count >= 8 && password.count <= 25
         
-        let userModel = RegisterRequestModel(
-            firstname: firstname,
-            lastname: lastname,
+        let isEmailValid = !email.isEmpty && email.contains("@") && email.contains(".")
+        
+        let isNameValid = !firstname.trimmingCharacters(in: .whitespaces).isEmpty
+        
+        return isNameValid && isEmailValid && hasUpperCase && hasLowerCase && isLengthValid
+    }
+    
+    // MARK: - Əsas Qeydiyyat Funksiyası
+    func handleRegistration() {
+        guard isFormValid else { return }
+        
+        self.isLoading = true
+        self.errorMessage = nil
+        self.emailCheckError = nil
+        
+        MyDoctorManager.shared.checkEmail(email: email) { [weak self] response in
+            DispatchQueue.main.async {
+                switch response {
+                case .success(let data):
+                    if data.available {
+                        self?.performActualRegistration()
+                    } else {
+                        self?.isLoading = false
+                        self?.emailCheckError = "Bu E-mail artıq istifadə olunub"
+                    }
+                case .error(let error):
+                    self?.isLoading = false
+                    self?.errorMessage = error.statusMessage ?? "Yoxlanış zamanı xəta."
+                }
+            }
+        }
+    }
+    
+    private func performActualRegistration() {
+        let components = firstname.trimmingCharacters(in: .whitespaces).components(separatedBy: " ")
+        let fname = components.first ?? ""
+        let lname = components.count > 1 ? components.dropFirst().joined(separator: " ") : "Patient"
+        
+        let requestModel = RegisterRequestModel(
+            firstname: fname,
+            lastname: lname,
             email: email,
             password: password,
-            phoneNumber: phoneNumber,
-            role: role
+            phoneNumber: phoneNumber.isEmpty ? "0000000000" : phoneNumber,
+            role: "PATIENT"
         )
         
-        MyDoctorManager.shared.register(user: userModel) { [weak self] response in
+        MyDoctorManager.shared.register(user: requestModel) { [weak self] response in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 switch response {
                 case .success(_):
                     self?.showOtpField = true
                 case .error(let error):
-                    self?.errorMessage = "Qeydiyyat xətası: \(error.errorMessage)"
+                    self?.errorMessage = error.statusMessage ?? "Qeydiyyat xətası."
                 }
             }
         }
-    }
-
-    // MARK: - OTP Verification Action
-    func verifyOTP() {
-        guard !otpCode.isEmpty else { return }
-        
-        isLoading = true
-        MyDoctorManager.shared.verifyOTP(email: email, code: otpCode) { [weak self] response in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                switch response {
-                case .success(_):
-                    self?.registrationSuccess = true
-                case .error(let error):
-                    self?.errorMessage = error.errorMessage
-                }
-            }
-        }
-    }
-    
-    // MARK: - Resend OTP
-    func resendCode() {
-       
     }
 }
 

@@ -12,38 +12,55 @@ struct RegistrationView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // MARK: - Header (Back & Logo)
+            
             VStack(spacing: 0) {
-                HStack {
-                    Button(action: { dismiss() }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundColor(.black)
-                            .padding(10)
-                    }
-                    Spacer()
-                }
-                .padding(.horizontal, 10)
-                .padding(.top, 5)
-                
                 Image("hospitalLogo")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 90, height: 90)
-                    .padding(.top, 5)
+                    .frame(width: 100, height: 100)
+                    .padding(.top, 60)
             }
-            .padding(.top, 0)
+            .frame(maxWidth: .infinity)
             
+            // MARK: - Form Area
             ScrollView {
-                VStack {
-                    AuthFormView(mode: .registration)
-                        .padding(.top, 20)
+                VStack(alignment: .leading, spacing: 10) {
+                    
+                    Text("Hesab yarat")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(.black.opacity(0.8))
+                        .padding(.horizontal, 25)
+                        .padding(.top, 30)
+                    
+                    AuthFormView(
+                        mode: .registration,
+                        name: $viewModel.firstname,
+                        email: $viewModel.email,
+                        password: $viewModel.password,
+                        isButtonActive: viewModel.isFormValid,
+                        emailError: viewModel.emailCheckError ?? viewModel.errorMessage ?? "",
+                        action: {
+                            viewModel.handleRegistration()
+                        }
+                    )
+                    .padding(.horizontal, 5)
                 }
-                .padding(.horizontal, 10)
             }
             .scrollIndicators(.hidden)
             .scrollDismissesKeyboard(.interactively)
         }
+        .background(Color.white)
         .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
+        .navigationDestination(isPresented: $viewModel.showOtpField) {
+            OTPView(email: viewModel.email)
+        }
+        .alert("Xəta", isPresented: .init(get: {
+            viewModel.errorMessage != nil && viewModel.emailCheckError == nil
+        }, set: { _ in viewModel.errorMessage = nil })) {
+            Button("Tamam", role: .cancel) { }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
     }
 }

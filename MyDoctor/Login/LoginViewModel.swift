@@ -56,9 +56,37 @@ class LoginViewModel {
 */
 
 import Foundation
+import Combine
 
 class LoginViewModel: ObservableObject {
-    func login() {
+    @Published var email = ""
+    @Published var password = ""
+    @Published var errorMessage: String? = nil
+    @Published var isLoading = false
+    @Published var isLoggedIn = false
+    
+    func handleLogin() {
+        guard !email.isEmpty && !password.isEmpty else {
+            errorMessage = "E-mail və şifrə boş ola bilməz"
+            return
+        }
         
+        isLoading = true
+        errorMessage = nil
+        
+        let requestModel = LoginRequestModel(email: email, password: password)
+        
+        MyDoctorManager.shared.login(user: requestModel) { [weak self] response in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                switch response {
+                case .success(let data):
+                    print("Giriş uğurlu: \(data.statusMessage ?? "")")
+                    self?.isLoggedIn = true
+                case .error(let error):
+                    self?.errorMessage = error.statusMessage ?? "E-mail və ya şifrə yanlışdır."
+                }
+            }
+        }
     }
 }

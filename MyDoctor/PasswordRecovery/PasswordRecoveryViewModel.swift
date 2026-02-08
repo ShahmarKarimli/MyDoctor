@@ -7,7 +7,7 @@
 
 import Foundation
 
-class PasswordRecoveryViewModel {
+/*class PasswordRecoveryViewModel {
     
     enum ViewState {
         case loading
@@ -42,5 +42,47 @@ class PasswordRecoveryViewModel {
                 }
             }
         }
+    }
+}*/
+
+
+import Foundation
+import Combine
+
+class PasswordRecoveryViewModel: ObservableObject {
+    @Published var email: String = ""
+    @Published var errorMessage: String? = nil
+    @Published var isLoading: Bool = false
+    @Published var showOtpScreen: Bool = false
+    
+    private var cancellables = Set<AnyCancellable>()
+    
+    func startRecovery() {
+        guard isEmailValid else {
+            self.errorMessage = "Düzgün e-mail daxil edin."
+            return
+        }
+        
+        isLoading = true
+        errorMessage = nil
+        
+        MyDoctorManager.shared.forgotPassword(email: email) { [weak self] response in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                
+                switch response {
+                case .success(_):
+                    self?.showOtpScreen = true
+                case .error(let error):
+                    self?.errorMessage = error.statusMessage ?? "Bu e-mail ilə bağlı hesab tapılmadı."
+                }
+            }
+        }
+    }
+    
+    // Sadə email validasiyası
+    var isEmailValid: Bool {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: email)
     }
 }

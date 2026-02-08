@@ -285,7 +285,9 @@ struct LoginView: View {
             // MARK: - Form Area
             ScrollView {
                 VStack {
-                    AuthFormView(mode: .login)
+                    AuthFormView(mode: .login, name: .constant(""), email: $viewModel.email, password: $viewModel.password, emailError: viewModel.errorMessage, action: {
+                        viewModel.handleLogin()
+                    })
                         .padding(.top, 30)
                 }
                 .padding(.horizontal, 10)

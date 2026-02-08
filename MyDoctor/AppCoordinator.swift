@@ -36,9 +36,9 @@ final class AppCoordinator {
     }
     
     func showPasswordRecovery() {
-        let vc = PasswordRecoveryController()
+       /* let vc = PasswordRecoveryController()
         vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
+        navigationController.pushViewController(vc, animated: true)*/
     }
     
     func showNewPassword() {
