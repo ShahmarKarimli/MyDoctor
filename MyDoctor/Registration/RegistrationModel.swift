@@ -5,6 +5,6 @@
 //  Created by Shahmar Karimli on 31.01.26.
 //
 
-struct CheckEmailResponse: Codable {
+struct CheckEmailResponse: Decodable {
     let available: Bool
 }

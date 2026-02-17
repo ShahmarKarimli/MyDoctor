@@ -13,7 +13,7 @@ enum HttpMethod: String {
     case delete = "DELETE"
 }
 
-struct  NetworkRequestModel {
+struct NetworkRequestModel {
     let path: String
     let method: HttpMethod
     let pathParams: [Any]?
@@ -45,23 +45,33 @@ struct  NetworkRequestModel {
 
 enum NetworkResponse<T: Decodable> {
     case success(T)
-    case error(CoreModel)
+    case failure(ErrorModel)
 }
 
-struct CoreModel: Codable {
+/*struct CoreModel: Decodable {
     let success: Bool?
     let statusCode: Int?
     let statusMessage: String?
-    let token: String?
 
     enum CodingKeys: String, CodingKey {
         case success = "success"
         case statusCode = "status_code"
         case statusMessage = "status_message"
-        case token = "token"
     }
     
     var errorMessage: String {
         statusMessage ?? "Local Error"
+    }
+}*/
+
+struct ErrorModel: Error, Decodable {
+    let timestamp: String?
+    var status: Int?
+    var error: String?
+    let message: String?
+    var path: String?
+    
+    var localizedDescription: String {
+        error ?? message ?? "Unknown Error"
     }
 }

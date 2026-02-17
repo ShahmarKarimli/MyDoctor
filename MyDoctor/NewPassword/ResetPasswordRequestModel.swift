@@ -14,11 +14,21 @@ import Foundation
 
 // MARK: - ResetPasswordRequestModel
 struct ResetPasswordRequestModel: Codable {
-    let token: String?
+    let email: String?
+    let otp: String?
     let newPassword: String?
 
     enum CodingKeys: String, CodingKey {
-        case token = "token"
+        case email = "email"
+        case otp = "otp"
         case newPassword = "newPassword"
+    }
+}
+
+struct EmailRequestModel: Encodable {
+    let email: String
+    
+    enum CodingKeys: String, CodingKey {
+        case email = "email"
     }
 }

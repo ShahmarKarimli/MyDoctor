@@ -93,16 +93,22 @@ import Foundation
 import Combine
 
 class RegistrationViewModel: ObservableObject {
-    @Published var firstname = ""
-    @Published var lastname = ""
+    @Published var fullName = ""
+    //@Published var lastname = ""
     @Published var email = ""
     @Published var password = ""
-    @Published var phoneNumber = ""
+    //@Published var phoneNumber = ""
     
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var showOtpField = false
     @Published var emailCheckError: String?
+    
+    let accountType: String
+    
+    init(accoutType: String) {
+        self.accountType = accoutType
+    }
     
     var isFormValid: Bool {
         let hasUpperCase = password.rangeOfCharacter(from: .uppercaseLetters) != nil
@@ -111,12 +117,11 @@ class RegistrationViewModel: ObservableObject {
         
         let isEmailValid = !email.isEmpty && email.contains("@") && email.contains(".")
         
-        let isNameValid = !firstname.trimmingCharacters(in: .whitespaces).isEmpty
+        let isNameValid = !fullName.trimmingCharacters(in: .whitespaces).isEmpty
         
         return isNameValid && isEmailValid && hasUpperCase && hasLowerCase && isLengthValid
     }
     
-    // MARK: - Əsas Qeydiyyat Funksiyası
     func handleRegistration() {
         guard isFormValid else { return }
         
@@ -124,7 +129,7 @@ class RegistrationViewModel: ObservableObject {
         self.errorMessage = nil
         self.emailCheckError = nil
         
-        MyDoctorManager.shared.checkEmail(email: email) { [weak self] response in
+        AuthManager.shared.checkEmail(email: email) { [weak self] response in
             DispatchQueue.main.async {
                 switch response {
                 case .success(let data):
@@ -134,36 +139,36 @@ class RegistrationViewModel: ObservableObject {
                         self?.isLoading = false
                         self?.emailCheckError = "Bu E-mail artıq istifadə olunub"
                     }
-                case .error(let error):
+                case .failure(let error):
                     self?.isLoading = false
-                    self?.errorMessage = error.statusMessage ?? "Yoxlanış zamanı xəta."
+                    self?.errorMessage = error.localizedDescription//"Yoxlanış zamanı xəta."
                 }
             }
         }
     }
     
     private func performActualRegistration() {
-        let components = firstname.trimmingCharacters(in: .whitespaces).components(separatedBy: " ")
+        let components = fullName.trimmingCharacters(in: .whitespaces).components(separatedBy: " ")
         let fname = components.first ?? ""
-        let lname = components.count > 1 ? components.dropFirst().joined(separator: " ") : "Patient"
+        let lname = components.count > 1 ? components.dropFirst().joined(separator: " ") : ""
         
         let requestModel = RegisterRequestModel(
             firstname: fname,
             lastname: lname,
             email: email,
             password: password,
-            phoneNumber: phoneNumber.isEmpty ? "0000000000" : phoneNumber,
-            role: "PATIENT"
+            phoneNumber: nil,
+            role: accountType
         )
         
-        MyDoctorManager.shared.register(user: requestModel) { [weak self] response in
+        AuthManager.shared.register(user: requestModel) { [weak self] response in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 switch response {
                 case .success(_):
                     self?.showOtpField = true
-                case .error(let error):
-                    self?.errorMessage = error.statusMessage ?? "Qeydiyyat xətası."
+                case .failure(let error):
+                    self?.errorMessage =  error.localizedDescription//"Qeydiyyat xətası."
                 }
             }
         }

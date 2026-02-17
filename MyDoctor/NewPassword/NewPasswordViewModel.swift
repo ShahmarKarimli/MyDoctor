@@ -6,58 +6,37 @@
 //
 
 import Foundation
+import Combine
 
-import Foundation
-
-class NewPasswordViewModel {
+class NewPasswordViewModel: ObservableObject {
+    @Published var password = ""
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    @Published var isSuccess = false
     
-    enum ViewState {
-        case loading
-        case loaded
-        case success
-        case error(String)
+    let email: String
+    
+    init(email: String) {
+        self.email = email
     }
     
-    // MARK: - Properties
-    var callBack: ((ViewState) -> Void)?
+    var isFormValid: Bool {
+        let regex = "^(?=.*[a-z])(?=.*[A-Z]).{8,25}$"
+        return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: password)
+    }
     
-    var token: String?
-    
-    // MARK: - API Call
-    func resetPassword(password: String) {
-        guard let token = token, !token.isEmpty else {
-            self.callBack?(.error("Təhlükəsizlik tokeni tapılmadı. Zəhmət olmasa OTP mərhələsini yenidən keçin."))
-            return
-        }
-        
-        guard !password.isEmpty else {
-            self.callBack?(.error("Şifrə boş ola bilməz."))
-            return
-        }
-        
-        if password.count < 6 {
-            self.callBack?(.error("Şifrə ən azı 6 simvoldan ibarət olmalıdır."))
-            return
-        }
-        
-        callBack?(.loading)
-        
-        let requestModel = ResetPasswordRequestModel(token: token, newPassword: password)
-       
-        MyDoctorManager.shared.resetPassword(request: requestModel) { [weak self] response in
-            guard let self = self else { return }
-            
-            DispatchQueue.main.async {
-                self.callBack?(.loaded)
-                
-                switch response {
-                case .success:
-                    self.callBack?(.success)
-                case .error(let error):
-                    let message = error.statusMessage ?? "Şifrəni yeniləmək mümkün olmadı."
-                    self.callBack?(.error(message))
-                }
+    func forgotPassword() {
+        errorMessage = nil
+        isLoading = true
+        AuthManager.shared.forgotPassword(email: email, completion: { [weak self] result in
+            guard let self else { return }
+            self.isLoading = false
+            switch result {
+            case .success(_):
+                self.isSuccess = true
+            case .failure(let error):
+                self.errorMessage = error.localizedDescription
             }
-        }
+        })
     }
 }

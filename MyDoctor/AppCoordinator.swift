@@ -16,6 +16,7 @@ final class AppCoordinator {
     
     func start() {
         navigationController.setViewControllers([UIHostingController(rootView: WelcomeView())], animated: true)
+        navigationController.setNavigationBarHidden(true, animated: false)
     }
 
     
@@ -42,9 +43,9 @@ final class AppCoordinator {
     }
     
     func showNewPassword() {
-        let vc = NewPasswordController()
+       /* let vc = NewPasswordController()
         vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
+        navigationController.pushViewController(vc, animated: true)*/
     }
     
     func goBack() {

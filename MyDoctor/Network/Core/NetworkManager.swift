@@ -1,57 +1,65 @@
-//
-//  NetworkManager.swift
-//  MyDoctor
-//
-//  Created by Shahmar Karimli on 31.01.26.
-//
-
 import Foundation
 
 class NetworkManager: TokenHelper {
     
     static let shared = NetworkManager()
     
-    // Lokal backend URL-i
     private let baseURL = "https://kenton-tribasic-buxomly.ngrok-free.dev"
     
     private var token: String? { retrieveToken() }
     
-    private init() {
-    }
+    private init() {}
     
     func request<T: Decodable>(model: NetworkRequestModel, completion: @escaping (NetworkResponse<T>) -> Void) {
         guard let urlRequest = getUrlRequest(model: model) else { return }
         
-        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            let httpResponse = response as? HTTPURLResponse
-            
-            if let data = data {
-                if let json = try? JSONSerialization.jsonObject(with: data, options: .mutableContainers),
-                   let jsonData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
-                    print("--- API RESPONSE ---")
-                    print(String(decoding: jsonData, as: UTF8.self))
-                }
-                
-                do {
-                    let decodedModel = try JSONDecoder().decode(T.self, from: data)
-                    DispatchQueue.main.async {
-                        completion(.success(decodedModel))
-                    }
-                    return
-                } catch {
-                    print("Decoding Error: \(error)")
-                }
-            }
-            
+        let completion = { result in
             DispatchQueue.main.async {
-                let errorMsg = error?.localizedDescription ?? "Server xətası: \(httpResponse?.statusCode ?? 0)"
-                completion(.error(CoreModel(
-                    success: false,
-                    statusCode: httpResponse?.statusCode,
-                    statusMessage: errorMsg,
-                    token: nil
-                )))
+                completion(result)
             }
+        }
+        
+        URLSession.shared.dataTask(with: urlRequest) {
+            data, response, error in
+            
+            if let data {
+                print(String(data: data, encoding: .utf8) as Any)
+                if let dto = try? JSONDecoder().decode(T.self, from: data) {
+                    if let messageDTO = dto as? MessageDTO, let statusCode = (response as? HTTPURLResponse)?.statusCode {
+                        if (200...299).contains(statusCode) {
+                            completion(.success(dto))
+                            return
+                        }
+                        completion(.failure(ErrorModel(
+                            timestamp: nil,
+                            status: statusCode,
+                            error: messageDTO.message,
+                            message: messageDTO.message,
+                            path: model.path)))
+                        return
+                    }
+                    completion(.success(dto))
+                    return
+                } else if var dto = try? JSONDecoder().decode(ErrorModel.self, from: data) {
+                    if dto.status == nil {
+                        dto.status = (response as? HTTPURLResponse)?.statusCode
+                    }
+                    if dto.path == nil {
+                        dto.path = model.path
+                    }
+                    completion(.failure(dto))
+                    return
+                }
+            }
+            
+            let dto = ErrorModel(
+                timestamp: nil,
+                status: (response as? HTTPURLResponse)?.statusCode,
+                error: error?.localizedDescription,
+                message: error?.localizedDescription,
+                path: model.path
+            )
+            completion(.failure(dto))
         }.resume()
     }
     

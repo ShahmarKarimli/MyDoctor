@@ -7,15 +7,13 @@
 
 import Foundation
 
-import Foundation
-
-class MyDoctorManager {
+class AuthManager {
     
-    static let shared = MyDoctorManager()
+    static let shared = AuthManager()
     private init() {}
     
     // MARK: - Registration
-    func register(user: RegisterRequestModel, completion: @escaping (NetworkResponse<CoreModel>) -> Void) {
+    func register(user: RegisterRequestModel, completion: @escaping (NetworkResponse<MessageDTO>) -> Void) {
         let model = NetworkRequestModel(
             path: MyDoctorEndPoints.register.path, //
             method: .post,
@@ -27,7 +25,7 @@ class MyDoctorManager {
     }
     
     // MARK: - Login
-    func login(user: LoginRequestModel, completion: @escaping (NetworkResponse<CoreModel>) -> Void) {
+    func login(user: LoginRequestModel, completion: @escaping (NetworkResponse<TokenDTO>) -> Void) {
         let model = NetworkRequestModel(
             path: MyDoctorEndPoints.login.path,
             method: .post,
@@ -39,7 +37,7 @@ class MyDoctorManager {
     }
     
     // MARK: - OTP Verification
-    func verifyOTP(email: String, code: String, completion: @escaping (NetworkResponse<CoreModel>) -> Void) {
+    func verifyOTP(email: String, code: String, completion: @escaping (NetworkResponse<TokenDTO>) -> Void) {
         let body = VerifyOtpRequestModel(email: email, code: code)
         let model = NetworkRequestModel(
             path: MyDoctorEndPoints.verify.path,
@@ -52,7 +50,7 @@ class MyDoctorManager {
     }
     
     // MARK: - Resend OTP
-    func resendOTP(email: String, completion: @escaping (NetworkResponse<CoreModel>) -> Void) {
+    func resendOTP(email: String, completion: @escaping (NetworkResponse<MessageDTO>) -> Void) {
         let body: [String: Any] = ["email": email]
         
         let model = NetworkRequestModel(
@@ -78,21 +76,20 @@ class MyDoctorManager {
         NetworkManager.shared.request(model: model, completion: completion)
     }
     
-    func forgotPassword(email: String, completion: @escaping (NetworkResponse<CoreModel>) -> Void) {
-        let body: [String: Any] = ["email": email]
+    func forgotPassword(email: String, completion: @escaping (NetworkResponse<MessageDTO>) -> Void) {
+        let body = EmailRequestModel(email: email)
         
         let model = NetworkRequestModel(
-            path: MyDoctorEndPoints.forgotPassword.path, 
+            path: MyDoctorEndPoints.forgotPassword.path,
             method: .post,
             pathParams: nil,
             body: body,
             queryParams: nil
         )
-        
         NetworkManager.shared.request(model: model, completion: completion)
     }
     
-    func resetPassword(request: ResetPasswordRequestModel, completion: @escaping (NetworkResponse<CoreModel>) -> Void) {
+    func resetPassword(request: ResetPasswordRequestModel, completion: @escaping (NetworkResponse<MessageDTO>) -> Void) {
         let model = NetworkRequestModel(
             path: MyDoctorEndPoints.resetPassword.path,
             method: .post,

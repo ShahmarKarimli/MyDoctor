@@ -10,10 +10,13 @@ import SwiftUI
 import SwiftUI
 
 struct OTPView: View {
-    @StateObject private var viewModel = OTPViewModel()
+    @StateObject private var viewModel: OTPViewModel
     @FocusState private var isFocused: Bool
     @Environment(\.dismiss) var dismiss
-    var email: String
+    
+    init(viewModel: OTPViewModel) {
+        _viewModel = .init(wrappedValue: viewModel)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -52,7 +55,7 @@ struct OTPView: View {
                     .keyboardType(.numberPad)
                     .focused($isFocused)
                     .disabled(viewModel.isBlocked)
-                    .onChange(of: viewModel.otpCode) { newValue in
+                    .onChange(of: viewModel.otpCode) { _, newValue in
                         if newValue.count == 6 {
                             viewModel.verifyOTP()
                         } else if newValue.count > 6 {
@@ -102,11 +105,10 @@ struct OTPView: View {
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)
         // MARK: - Navigation Logic
-        .navigationDestination(isPresented: $viewModel.isRegistrationComplete) {
-            WelcomeView()
+        .navigationDestination(isPresented: $viewModel.isVerified) {
+            MainView()
         }
         .onAppear {
-            viewModel.email = email
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 isFocused = true
             }

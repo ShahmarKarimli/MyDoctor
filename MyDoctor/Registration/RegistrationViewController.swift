@@ -7,8 +7,12 @@
 import SwiftUI
 
 struct RegistrationView: View {
-    @StateObject private var viewModel = RegistrationViewModel()
+    @StateObject private var viewModel: RegistrationViewModel
     @Environment(\.dismiss) var dismiss
+    
+    init(viewModel: StateObject<RegistrationViewModel>) {
+        _viewModel = viewModel
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -34,7 +38,7 @@ struct RegistrationView: View {
                     
                     AuthFormView(
                         mode: .registration,
-                        name: $viewModel.firstname,
+                        name: $viewModel.fullName,
                         email: $viewModel.email,
                         password: $viewModel.password,
                         isButtonActive: viewModel.isFormValid,
@@ -50,10 +54,8 @@ struct RegistrationView: View {
             .scrollDismissesKeyboard(.interactively)
         }
         .background(Color.white)
-        .navigationBarHidden(true)
-        .navigationBarBackButtonHidden(true)
         .navigationDestination(isPresented: $viewModel.showOtpField) {
-            OTPView(email: viewModel.email)
+            OTPView(viewModel: .init(email: viewModel.email))
         }
         .alert("Xəta", isPresented: .init(get: {
             viewModel.errorMessage != nil && viewModel.emailCheckError == nil

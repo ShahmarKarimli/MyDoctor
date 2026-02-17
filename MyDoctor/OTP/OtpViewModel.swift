@@ -7,29 +7,26 @@
 import Foundation
 import Combine
 
-import Foundation
-import Combine
-
-class OTPViewModel: ObservableObject {
-    
-  
+class OTPViewModel: ObservableObject, TokenHelper {
     @Published var otpCode = ""
     @Published var timeRemaining = 59
     @Published var isTimerRunning = false
     @Published var errorMessage: String?
     @Published var isBlocked = false
     @Published var isLoading = false
-    @Published var isRegistrationComplete = false
+    @Published var isVerified = false
     
     private var wrongAttempts = 0
     private var resendAttempts = 0
     let maxAttempts = 3
     let otpLength = 6
     private var timer: AnyCancellable?
-    var coordinator: AppCoordinator?
-    var email: String = ""
+    let email: String
 
-    init() { startTimer() }
+    init(email: String) {
+        self.email = email
+        startTimer()
+    }
 
     func startTimer() {
         timeRemaining = 60
@@ -47,27 +44,15 @@ class OTPViewModel: ObservableObject {
                 }
             }
     }
-
+    
     func verifyOTP() {
         guard !isBlocked, otpCode.count == otpLength else { return }
-        
         isLoading = true
         errorMessage = nil
-        
-        MyDoctorManager.shared.verifyOTP(email: email, code: otpCode) { [weak self] response in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                switch response {
-                case .success(_):
-                    self?.isRegistrationComplete = true
-                case .error(let error):
-                    self?.handleWrongAttempt(error.statusMessage ?? "Kod yanlışdır")
-                }
-            }
-        }
+        //override
     }
 
-    private func handleWrongAttempt(_ message: String) {
+    func handleWrongAttempt(_ message: String) {
         wrongAttempts += 1
         otpCode = ""
         
@@ -92,18 +77,7 @@ class OTPViewModel: ObservableObject {
         }
 
         isLoading = true
-        MyDoctorManager.shared.resendOTP(email: email) { [weak self] response in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                switch response {
-                case .success(_):
-                    self?.errorMessage = nil
-                    self?.startTimer()
-                case .error(let error):
-                    self?.errorMessage = error.statusMessage ?? "Xəta baş verdi"
-                }
-            }
-        }
+        //override
     }
     
     func timeString(from totalSeconds: Int) -> String {
