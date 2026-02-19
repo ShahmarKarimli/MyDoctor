@@ -49,7 +49,7 @@ struct LoginView: View {
                 .scrollDismissesKeyboard(.interactively)
             }
             .navigationDestination(isPresented: $viewModel.isLoggedIn) {
-                MainView()
+                HomeView()
             }
             
             .navigationDestination(isPresented: $navigateToRecovery) {

@@ -106,7 +106,7 @@ struct OTPView: View {
         .navigationBarHidden(true)
         // MARK: - Navigation Logic
         .navigationDestination(isPresented: $viewModel.isVerified) {
-            MainView()
+            HomeView()
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
