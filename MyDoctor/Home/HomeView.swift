@@ -67,12 +67,12 @@ struct HomeView: View {
                         isActive: $goToProfile
                     ) { EmptyView() }
                         .hidden()
-                    /* NavigationLink(
+                     NavigationLink(
                         destination: SearchView().navigationBarBackButtonHidden(true),
                         isActive: $goToSearch) {
                             EmptyView()
                         }
-                        .hidden()*/
+                        .hidden()
                 }
                 .padding(.bottom, 20)
             }

@@ -50,12 +50,25 @@ struct RegistrationView: View {
                     .padding(.horizontal, 5)
                 }
             }
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            dismiss()
+                        }) {
+                            Image(systemName: "chevron.left")
+                                .bold()
+                                .foregroundColor(.teal)
+                        }
+                    }
+                }
             .scrollIndicators(.hidden)
             .scrollDismissesKeyboard(.interactively)
         }
         .background(Color.white)
+        
         .navigationDestination(isPresented: $viewModel.showOtpField) {
-            OTPView(viewModel: .init(email: viewModel.email))
+            OTPView(viewModel: RegisterOTPViewModel(email: viewModel.email))
         }
         .alert("Xəta", isPresented: .init(get: {
             viewModel.errorMessage != nil && viewModel.emailCheckError == nil

@@ -20,6 +20,7 @@ struct WelcomeView: View {
     @StateObject private var viewModel = WelcomeViewModel()
     @State private var navigateToRegistration = false
     @State private var navigateToLogin = false
+   
     
     var body: some View {
         NavigationStack {
@@ -27,6 +28,8 @@ struct WelcomeView: View {
                 title: "Xoş gəlmişsiniz",
                 primaryButtonTitle: "Qeydiyyatdan keç",
                 secondaryButtonTitle: "Daxil ol",
+                primaryColor: HekimimColors.buttonPrimary,
+                secondaryColor: HekimimColors.secondaryButton,
                 primaryButtonAction: {
                     navigateToRegistration = true
                 },
@@ -36,6 +39,7 @@ struct WelcomeView: View {
             )
             .navigationDestination(isPresented: $navigateToRegistration) {
                 ProfileSelectionView()
+                    .navigationBarBackButtonHidden(true)
             }
             .navigationDestination(isPresented: $navigateToLogin) {
                 LoginView()

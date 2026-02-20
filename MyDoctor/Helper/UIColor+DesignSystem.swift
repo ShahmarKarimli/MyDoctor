@@ -45,7 +45,7 @@ public extension UIColor {
     static let textError = UIColor.fromHex("#F5222D")
     static let textInverted = UIColor.fromHex("#FFFFFF")
     static let buttonDisabled = UIColor.fromHex("#9A9A9A")
-    static let buttonPrimary = UIColor.fromHex("#09A895")
+   // static let buttonPrimary = UIColor.fromHex("#09A895")
    
 }
 
@@ -58,7 +58,8 @@ enum HekimimColors {
     static let primary = Color(hex: "#07A795")
     static let textPrimary = Color.black
     static let textSecondary = Color(hex: "#4C4C4C")
-    
+    static let buttonSecondary = Color(hex: "#ACD4D4")
+    static let buttonPrimary = Color(hex: "#09A895")
     static let badgeFill = Color(hex: "#E7F3F1")
     static let divider = Color(hex: "#E6E6E6")
     

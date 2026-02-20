@@ -12,6 +12,8 @@ struct WelcomeComponentView: View {
     let title: String
     let primaryButtonTitle: String
     let secondaryButtonTitle: String
+    let primaryColor: Color
+    let secondaryColor: Color
     let primaryButtonAction: () -> Void
     let secondaryButtonAction: () -> Void
     
@@ -29,7 +31,7 @@ struct WelcomeComponentView: View {
             
             // Title
             Text(title)
-                .font(.system(size: 28, weight: .bold))
+                .font(.system(size: 18, weight: .medium))
                 .foregroundColor(.black.opacity(0.8))
             
             Spacer()
@@ -41,7 +43,7 @@ struct WelcomeComponentView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color(red: 77/255, green: 157/255, blue: 142/255))
+                        .background(primaryColor)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }
@@ -51,7 +53,7 @@ struct WelcomeComponentView: View {
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color(red: 100/255, green: 196/255, blue: 178/255))
+                        .background(secondaryColor)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }
@@ -62,15 +64,3 @@ struct WelcomeComponentView: View {
     }
 }
 
-// MARK: - Preview
-struct WelcomeComponentView_Previews: PreviewProvider {
-    static var previews: some View {
-        WelcomeComponentView(
-            title: "Xoş gəlmişsiniz",
-            primaryButtonTitle: "Qeydiyyatdan keç",
-            secondaryButtonTitle: "Daxil ol",
-            primaryButtonAction: {},
-            secondaryButtonAction: {}
-        )
-    }
-}
