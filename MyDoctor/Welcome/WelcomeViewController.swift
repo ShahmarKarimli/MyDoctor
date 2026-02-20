@@ -37,6 +37,7 @@ struct WelcomeView: View {
                     navigateToLogin = true
                 }
             )
+            .background(Color.white)
             .navigationDestination(isPresented: $navigateToRegistration) {
                 ProfileSelectionView()
                     .navigationBarBackButtonHidden(true)

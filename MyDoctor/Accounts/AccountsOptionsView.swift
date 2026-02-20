@@ -45,6 +45,7 @@ struct ProfileSelectionView: View {
                 }
             }
         }
+        .background(Color.white)
         .navigationDestination(isPresented: $navigateToDoctor) {
             RegistrationView(viewModel: StateObject(wrappedValue: RegistrationViewModel(accoutType: "DOCTOR")))
         }

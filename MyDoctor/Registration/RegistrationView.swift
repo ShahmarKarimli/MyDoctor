@@ -66,7 +66,6 @@ struct RegistrationView: View {
             .scrollDismissesKeyboard(.interactively)
         }
         .background(Color.white)
-        
         .navigationDestination(isPresented: $viewModel.showOtpField) {
             OTPView(viewModel: RegisterOTPViewModel(email: viewModel.email))
         }
