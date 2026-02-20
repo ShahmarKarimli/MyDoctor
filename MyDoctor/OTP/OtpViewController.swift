@@ -35,7 +35,6 @@ struct OTPView: View {
 
             // MARK: - Title Section
             VStack(alignment: .leading, spacing: 10) {
-                // Şəkildəki başlıq
                 Text("OTP kodunu daxil edin")
                     .font(.system(size: 22, weight: .bold))
                 
@@ -73,7 +72,6 @@ struct OTPView: View {
 
             // MARK: - Timer & Resend Section
             HStack(spacing: 15) {
-                // Timer (Bloklananda rəngi dəyişir)
                 Text(viewModel.timeString(from: viewModel.timeRemaining))
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(viewModel.isBlocked ? .gray.opacity(0.5) : .black)
@@ -97,7 +95,7 @@ struct OTPView: View {
                     .foregroundColor(.red)
                     .padding(.horizontal, 40)
                     .padding(.top, 20)
-                    .multilineTextAlignment(.center) // Şəkildə mərkəzdədir
+                    .multilineTextAlignment(.center)
             }
 
             Spacer()
