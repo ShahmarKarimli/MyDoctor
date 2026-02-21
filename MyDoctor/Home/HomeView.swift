@@ -72,6 +72,8 @@ struct HomeView: View {
             SearchView()
                 .navigationBarBackButtonHidden(true)
         }
+        .navigationBarTitle("")
+        .navigationBarHidden(true)
     }
     
     private func currentPackages(vm: HomeViewModel) -> [HomePackage] {
@@ -86,7 +88,7 @@ struct HomeTopBar: View {
     let onProfile: () -> ()
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 20) {
             Button(action: onMenu) {
                 Image("3line")
                     .font(.system(size: 18, weight: .regular))
@@ -96,6 +98,7 @@ struct HomeTopBar: View {
             
             SearchBar(text: $searchText, onSearch: onSearch)
                 .frame(height: 42)
+            
             
             Button(action: onProfile) {
                 Image("person")
@@ -107,27 +110,6 @@ struct HomeTopBar: View {
     }
 }
 
-//struct SearchBar: View {
-//    @Binding var text: String
-//    let onSearch: () -> ()
-//    
-//    var body: some View {
-//        HStack(spacing: 10) {
-//            TextField("Axtarış", text: $text)
-//                .font(.system(size: 14, weight: .medium))
-//            
-//            Button(action: onSearch) {
-//                Image("glass")
-//                    .font(.system(size: 18, weight: .semibold))
-//                    .foregroundColor(HekimimColors.primary)
-//                    .frame(width: 36, height: 36)
-//            }
-//        }
-//        .padding(.horizontal, 14)
-//        .background(HekimimColors.card)
-//        .cornerRadius(10)
-//    }
-//}
 struct SearchBar: View {
     @Binding var text: String
     let onSearch: () -> ()
