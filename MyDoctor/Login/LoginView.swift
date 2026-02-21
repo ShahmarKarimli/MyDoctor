@@ -48,6 +48,16 @@ struct LoginView: View {
                 .scrollIndicators(.hidden)
                 .scrollDismissesKeyboard(.interactively)
             }
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: { dismiss() }) {
+                        Image(systemName: "chevron.left")
+                            .bold()
+                            .foregroundColor(.teal)
+                    }
+                }
+            }
             .navigationDestination(isPresented: $viewModel.isLoggedIn) {
                 HomeView()
             }

@@ -62,6 +62,7 @@ enum HekimimColors {
     static let buttonPrimary = Color(hex: "#09A895")
     static let badgeFill = Color(hex: "#E7F3F1")
     static let divider = Color(hex: "#E6E6E6")
+    static let imageBackground = Color(hex: "#87CEC5")
     
     static let grayButton = Color(hex: "#D6D6D6")
     static let grayButtonText = Color(hex: "#6F6F6F")

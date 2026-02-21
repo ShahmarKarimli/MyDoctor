@@ -9,55 +9,97 @@ import SwiftUI
 
 struct SearchView: View {
     @Environment(\.dismiss) private var dismiss
-    
-    @State private var doctorQuery: String = ""
-    @State private var hospitalQuery: String = ""
-    
-    let chips = ["Kardioloq", "Ginekoloq", "Psixoloq", "Pediatr"]
+    @StateObject private var vm = SearchViewModel()
     
     var body: some View {
         ZStack {
             HekimimColors.background.ignoresSafeArea()
             
             VStack(spacing: 14) {
-                
                 SearchTopBar(title: "Axtarış") {
                     dismiss()
                 }
                 .padding(.top, 6)
                 
                 VStack(spacing: 12) {
-                    
                     SearchField(
-                        text: $doctorQuery,
+                        text: $vm.doctorQuery,
                         placeholder: "Həkim/ ixtisas üzrə axtar",
                         rightIcon: "magnifyingglass",
                         rightIconType: .search) {
-                            print("search doctor")
+                            vm.searchDoctors()
                         }
                     
                     HStack(spacing: 10) {
                         SearchField(
-                            text: $hospitalQuery,
+                            text: $vm.hospitalQuery,
                             placeholder: "Xəstəxana adı",
                             rightIcon: "magnifyingglass",
                             rightIconType: .search) {
-                                print("search hospital")
+                                vm.searchDoctors()
                             }
                         
-                        FilterButton(title: "Qiymət") {
+                        FilterButton(title: vm.priceRange) {
                             print("price filter")
                         }
                         .frame(width: 130)
                     }
                     
-                    ChipsRow(items: chips) { item in
-                        print("chip:", item)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(vm.chips, id: \.self) { item in
+                                Button {
+                                    vm.selectChip(item)
+                                } label: {
+                                    Text(item)
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(vm.selectedChip == item ? .white : HekimimColors.textSecondary)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 8)
+                                        .background(vm.selectedChip == item ? HekimimColors.primary : HekimimColors.card)
+                                        .cornerRadius(12)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 20)
                     }
                 }
-                .padding(.horizontal, 20)
                 
-                Spacer()
+                ScrollView(showsIndicators: false) {
+                    if vm.selectedChip != nil || !vm.doctorQuery.isEmpty || !vm.hospitalQuery.isEmpty {
+                        if vm.doctors.isEmpty {
+                            VStack(spacing: 16) {
+                                Spacer().frame(height: 100)
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 60))
+                                    .foregroundColor(HekimimColors.textSecondary.opacity(0.3))
+                                Text("Nəticə tapılmadı")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(HekimimColors.textSecondary)
+                            }
+                            .frame(maxWidth: .infinity)
+                        } else {
+                            LazyVGrid(columns: vm.columns, spacing: 14) {
+                                ForEach(vm.doctors) { doctor in
+                                    DoctorGridCard(doctor: doctor)
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.top, 10)
+                        }
+                    } else {
+                        VStack(spacing: 16) {
+                            Spacer().frame(height: 100)
+                            Image(systemName: "stethoscope")
+                                .font(.system(size: 60))
+                                .foregroundColor(HekimimColors.primary.opacity(0.3))
+                            Text("İxtisas seçin və ya axtarış edin")
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(HekimimColors.textSecondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -166,6 +208,60 @@ struct ChipsRow: View {
                 }
             }
         }
+    }
+}
+
+struct DoctorGridCard: View {
+    let doctor: Doctor
+    
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            Image(doctor.image)
+                .resizable()
+                .scaledToFill()
+                .frame(height: 200)
+                .clipped()
+            
+            VStack {
+                HStack {
+                    Text(doctor.name)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.leading, 12)
+                        .padding(.top, 12)
+                    
+                    Spacer()
+                    
+                    Button {
+                    } label: {
+                        Image(systemName: "heart.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(.white)
+                            .padding(.trailing, 12)
+                            .padding(.top, 12)
+                    }
+                }
+                Spacer()
+            }
+            
+            
+            Button {
+            } label: {
+                Text("Hekimə yazıl")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(HekimimColors.primary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .background(.white)
+                    .cornerRadius(12)
+            }
+            .padding(.horizontal, 12)
+            .padding(.bottom, 12)
+        }
+        .frame(height: 200)
+        .background(HekimimColors.imageBackground)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
 }
 
