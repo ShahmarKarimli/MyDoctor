@@ -45,6 +45,7 @@ struct SearchView: View {
                         .frame(width: 130)
                     }
                     
+                    
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(vm.chips, id: \.self) { item in
@@ -61,9 +62,9 @@ struct SearchView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal, 20)
                     }
                 }
+                .padding(.horizontal, 20)
                 
                 ScrollView(showsIndicators: false) {
                     if vm.selectedChip != nil || !vm.doctorQuery.isEmpty || !vm.hospitalQuery.isEmpty {
@@ -156,7 +157,7 @@ struct SearchField: View {
                     .frame(width: 36, height: 36)
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 16)
         .frame(height: 42)
         .background(HekimimColors.card)
         .cornerRadius(8)
@@ -180,7 +181,7 @@ struct FilterButton: View {
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(HekimimColors.primary)
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 16)
             .frame(height: 42)
             .background(HekimimColors.card)
             .cornerRadius(8)
