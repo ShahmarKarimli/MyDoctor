@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct HomeView: View {
     @StateObject private var vm = HomeViewModel()
     
@@ -61,21 +60,17 @@ struct HomeView: View {
                     .padding(.horizontal, 20)
                     
                     Spacer().frame(height: 10)
-                    
-                    NavigationLink(
-                        destination: ProfileView().navigationBarBackButtonHidden(true),
-                        isActive: $goToProfile
-                    ) { EmptyView() }
-                        .hidden()
-                     NavigationLink(
-                        destination: SearchView().navigationBarBackButtonHidden(true),
-                        isActive: $goToSearch) {
-                            EmptyView()
-                        }
-                        .hidden()
                 }
                 .padding(.bottom, 20)
             }
+        }
+        .navigationDestination(isPresented: $goToProfile) {
+            ProfileView()
+                .navigationBarBackButtonHidden(true)
+        }
+        .navigationDestination(isPresented: $goToSearch) {
+            SearchView()
+                .navigationBarBackButtonHidden(true)
         }
     }
     
@@ -112,6 +107,27 @@ struct HomeTopBar: View {
     }
 }
 
+//struct SearchBar: View {
+//    @Binding var text: String
+//    let onSearch: () -> ()
+//    
+//    var body: some View {
+//        HStack(spacing: 10) {
+//            TextField("Axtarış", text: $text)
+//                .font(.system(size: 14, weight: .medium))
+//            
+//            Button(action: onSearch) {
+//                Image("glass")
+//                    .font(.system(size: 18, weight: .semibold))
+//                    .foregroundColor(HekimimColors.primary)
+//                    .frame(width: 36, height: 36)
+//            }
+//        }
+//        .padding(.horizontal, 14)
+//        .background(HekimimColors.card)
+//        .cornerRadius(10)
+//    }
+//}
 struct SearchBar: View {
     @Binding var text: String
     let onSearch: () -> ()
@@ -120,6 +136,7 @@ struct SearchBar: View {
         HStack(spacing: 10) {
             TextField("Axtarış", text: $text)
                 .font(.system(size: 14, weight: .medium))
+                .disabled(true)
             
             Button(action: onSearch) {
                 Image("glass")
@@ -131,6 +148,9 @@ struct SearchBar: View {
         .padding(.horizontal, 14)
         .background(HekimimColors.card)
         .cornerRadius(10)
+        .onTapGesture {
+            onSearch()
+        }
     }
 }
 
@@ -363,3 +383,8 @@ struct PackageCard: View {
     }
 }
 
+#Preview {
+    NavigationStack {
+        HomeView()
+    }
+}
